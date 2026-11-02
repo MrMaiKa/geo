@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Демонстрационный прототип карты и аналитики ГИС АПК Республики Татарстан">
+  <title>ГИС АПК РТ — интерактивный прототип</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"><svg class="ui-icon" aria-hidden="true"><use href="#ui-brand"></use></svg></span><span><strong>ГИС АПК РТ</strong><small>Цифровая карта · прототип</small></span></div>
+      <div class="top-center"><span class="live-dot"></span> Демонстрационные данные <span class="top-divider"></span> Республика Татарстан</div>
+      <div class="top-actions">
+        <button class="icon-button mobile-sidebar" id="sidebarToggle" aria-label="Открыть фильтры"><svg class="ui-icon" aria-hidden="true"><use href="#ui-menu"></use></svg></button>
+        <button class="icon-button mobile-sidebar" id="objectListToggle" aria-label="Открыть список объектов"><svg class="ui-icon" aria-hidden="true"><use href="#ui-grid"></use></svg></button>
+        <button class="theme-button" id="themeToggle" aria-label="Переключить тему"><span id="themeIcon"><svg class="ui-icon" aria-hidden="true"><use href="#ui-sun"></use></svg></span><span id="themeLabel">Светлая тема</span></button>
+        <div class="avatar" aria-label="Демо профиль">Д</div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-head"><div class="eyebrow">ПРОСТРАНСТВЕННЫЕ ДАННЫЕ</div><h1>Объекты на карте</h1><p>Выберите направление, слой или объект для просмотра профиля.</p><div class="sidebar-status" id="mapBadgeText" aria-live="polite">Участки на фрагменте карты</div></div>
+        <div class="module-switch" role="tablist" aria-label="Направление">
+          <button class="module-tab active" id="allTab" role="tab" aria-selected="true"><svg class="ui-icon" aria-hidden="true"><use href="#ui-grid"></use></svg><span>Все</span></button>
+          <button class="module-tab" id="fieldsTab" role="tab" aria-selected="false"><svg class="ui-icon" aria-hidden="true"><use href="#ui-plant"></use></svg><span>Растениеводство</span></button>
+          <button class="module-tab" id="animalsTab" role="tab" aria-selected="false"><svg class="ui-icon" aria-hidden="true"><use href="#icon-farm"></use></svg><span>Животноводство</span></button>
+        </div>
+        <div class="sidebar-search"><svg class="ui-icon" aria-hidden="true"><use href="#ui-search"></use></svg><input id="searchInput" type="search" placeholder="Участок, тип или демо-номер" aria-label="Поиск участков"><kbd>Ctrl K</kbd></div>
+        <div class="sidebar-section"><div class="section-heading"><span>Фильтры</span><button class="text-button" id="resetFilters">Сбросить</button></div><div class="filter-row" id="filterChips"></div></div>
+        <div class="sidebar-section advanced-section"><div class="section-heading"><span>Подбор объектов</span><span class="muted">демо</span></div><label class="role-demo">Режим просмотра<select id="rolePreview"><option value="ministry">МСХиП РТ · весь набор</option><option value="district">УСХиП · Район А</option><option value="producer">СХТП · условные объекты</option></select></label><div class="advanced-grid"><label>Район<select id="districtFilter"><option value="">Все районы</option><option value="Район А">Район А</option><option value="Район Б">Район Б</option><option value="Район В">Район В</option></select></label><label>Статус<select id="statusFilter"><option value="">Любой статус</option><option value="Используется">Используется</option><option value="Не используется">Не используется</option></select></label><label>Площадь, га от<input id="areaMin" type="number" min="0" step="0.01" placeholder="От"></label><label>до<input id="areaMax" type="number" min="0" step="0.01" placeholder="До"></label><label>Почва<select id="soilFilter"><option value="">Любая</option><option value="Чернозём">Чернозём</option><option value="Серая лесная">Серая лесная</option><option value="Нет данных">Нет данных</option></select></label><label>Рельеф<select id="reliefFilter"><option value="">Любой</option><option value="Равнина">Равнина</option><option value="Склон">Склон</option><option value="Нет данных">Нет данных</option></select></label></div><p class="advanced-note">Роли и характеристики показаны как макет. Ограничения доступа в браузере не обеспечивают защиту данных. Площадь условная, в га.</p></div>
+        <div class="sidebar-section layers-section"><div class="section-heading"><span>Наложения</span><span class="muted">03</span></div><label class="layer-row"><span class="layer-icon terrain"><svg class="ui-icon" aria-hidden="true"><use href="#ui-outline"></use></svg></span><span><strong>Выделение участка</strong><small>Подсветка выбранной области</small></span><input type="checkbox" id="layerBoundaries" checked><i></i></label><label class="layer-row"><span class="layer-icon vegetation"><svg class="ui-icon" aria-hidden="true"><use href="#ui-layers"></use></svg></span><span><strong>Типы объектов</strong><small>Цвета по условным обозначениям</small></span><input type="checkbox" id="layerHealth" checked><i></i></label><label class="layer-row"><span class="layer-icon objects"><svg class="ui-icon" aria-hidden="true"><use href="#ui-info"></use></svg></span><span><strong>Подсказки</strong><small>Тип при наведении</small></span><input type="checkbox" id="layerLabels" checked><i></i></label></div>
+        <div class="sidebar-section legend-section" id="mapLegend" hidden></div>
+        <div class="sidebar-section source-overview"><div class="section-heading"><span>Состояние источников</span></div><div class="source-overview-row"><span>Контуры карты</span><b>Локальный макет</b></div><div class="source-overview-row"><span>ЕГРН, ЕФГИС ЗСН, ДЗЗ, СМЭВ</span><b>Ответы имитированы</b></div><p class="advanced-note">Сведения в профиле созданы для примера. Обмена с ведомственными системами нет.</p></div>
+        <div class="sidebar-footer"><span class="footer-pulse"></span><span>Прототип интерфейса · без подключения к ГИС</span></div>
+      </aside>
+
+      <aside class="object-pane" id="objectPane" aria-label="Список объектов">
+        <div class="object-pane-heading"><strong id="listTitle">Земельные участки</strong><span class="count" id="objectCount">12</span></div>
+        <div id="objectList" class="object-list"></div>
+      </aside>
+
+      <section class="content-area">
+        <div class="content-toolbar"><div class="breadcrumb">ГИС АПК <span>/</span> <strong id="breadcrumbCurrent">Цифровой двойник растениеводства</strong></div><div class="toolbar-actions"><button class="toolbar-button active" id="mapViewBtn"><svg class="ui-icon" aria-hidden="true"><use href="#ui-map"></use></svg><span>Карта</span></button><button class="toolbar-button" id="analyticsViewBtn"><svg class="ui-icon" aria-hidden="true"><use href="#ui-chart"></use></svg><span>Аналитика</span></button><span class="toolbar-separator"></span><button class="toolbar-button" id="fitBtn" title="Показать все объекты"><svg class="ui-icon" aria-hidden="true"><use href="#ui-fit"></use></svg><span>Показать всё</span></button><div class="map-tools"><button id="zoomIn" title="Приблизить" aria-label="Приблизить"><svg class="ui-icon" aria-hidden="true"><use href="#ui-plus"></use></svg></button><output id="zoomLevel" for="zoomRange">100%</output><input id="zoomRange" type="range" min="70" max="400" step="10" value="100" aria-label="Масштаб карты"><button id="zoomOut" title="Отдалить" aria-label="Отдалить"><svg class="ui-icon" aria-hidden="true"><use href="#ui-minus"></use></svg></button><button id="zoomReset" title="Сбросить масштаб" aria-label="Сбросить масштаб"><svg class="ui-icon" aria-hidden="true"><use href="#ui-fit"></use></svg></button></div><a class="toolbar-button" href="map-vector.svg" download="кадастровая-карта.svg" title="Скачать векторную карту"><svg class="ui-icon" aria-hidden="true"><use href="#ui-download"></use></svg><span>Скачать SVG</span></a></div></div>
+        <div class="main-stage" id="mainStage">
+          <div class="map-panel" id="mapPanel">
+            <div class="map-surface" id="mapSurface">
+              <div id="rasterViewport" class="raster-viewport"><img id="mapVector" src="map-vector.svg" alt="Векторная кадастровая карта с красными границами участков"><canvas id="parcelOverlay" aria-label="Интерактивные участки карты"></canvas></div>
+            </div>
+            <div class="detail-card" id="detailCard"><div class="detail-top"><span class="detail-kicker" id="detailKicker">ЦИФРОВОЙ ПРОФИЛЬ</span><button class="close-detail" id="closeDetail" aria-label="Закрыть карточку"><svg class="ui-icon" aria-hidden="true"><use href="#ui-close"></use></svg></button></div><div class="detail-header"><div class="detail-icon" id="detailIcon"><svg class="ui-icon" aria-hidden="true"><use href="#ui-plant"></use></svg></div><div><h2 id="detailName">Участок</h2><p id="detailDistrict">Демонстрационный район</p></div></div><div class="detail-status" id="detailStatus">Демо</div><div class="detail-metrics" id="detailMetrics"></div><div class="detail-divider"></div><div class="detail-section-title">Кадастровая запись <span class="demo-label">ВЫМЫШЛЕННАЯ</span></div><div id="cadastreCard" class="cadastre-card"></div><div class="detail-divider"></div><div class="detail-section-title">Тематические сведения</div><div id="profileBlocks" class="profile-blocks"></div><div class="detail-divider"></div><div class="detail-section-title">Интеграции <span class="demo-label">ИМИТАЦИЯ</span></div><div id="detailSources" class="source-list"></div><div class="detail-actions"><button id="detailFocus"><svg class="ui-icon" aria-hidden="true"><use href="#ui-fit"></use></svg>Показать на карте</button><button id="detailAnalytics"><svg class="ui-icon" aria-hidden="true"><use href="#ui-chart"></use></svg>Аналитика</button></div></div>
+          </div>
+          <div class="analytics-panel hidden" id="analyticsPanel"><div class="analytics-head"><div><div class="eyebrow">СВОДНАЯ АНАЛИТИКА</div><h2 id="analyticsTitle">Участки на карте</h2><p id="analyticsSubtitle">Классификация участков на фрагменте карты.</p></div><div class="analytics-period"><svg class="ui-icon" aria-hidden="true"><use href="#ui-clock"></use></svg><span>Демонстрационные типы</span></div></div><div class="metric-grid" id="metricGrid"></div><div class="theme-heading"><strong>Тематические блоки</strong><span>Выберите показатель, чтобы открыть список объектов</span></div><div class="theme-grid" id="themeGrid"></div><div class="analytics-grid"><div class="chart-card"><div class="card-heading"><strong id="chartTitle">Распределение по типам</strong><span>Фрагмент карты</span></div><div class="bar-chart" id="barChart"></div></div><div class="chart-card"><div class="card-heading"><strong>Как читать данные</strong><span>Прототип</span></div><p class="classification-note">Красные границы восстановлены по исходному изображению. Категории земли и животноводства назначены для демонстрации интерфейса и не являются кадастровыми сведениями.</p></div></div><div class="analytics-bottom"><strong>Участки для просмотра</strong><div id="analyticsItems"></div></div></div>
+          <div class="analytics-panel hidden" id="resultsPanel"><div class="results-head"><button id="backToAnalytics" class="back-button"><svg class="ui-icon" aria-hidden="true"><use href="#ui-back"></use></svg>Аналитика</button><div class="eyebrow">РЕЗУЛЬТАТЫ ПОДБОРА</div><h2 id="resultsTitle">Список объектов</h2><p id="resultsSubtitle">Выберите объект для открытия профиля на карте.</p></div><div id="resultsItems" class="results-list"></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <svg class="icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="ui-brand" viewBox="0 0 32 32"><path d="M4 25 11 14l5 5 5-12 7 18M4 25h24M10 9l3-3m12 7 3-3"/></symbol>
+    <symbol id="ui-menu" viewBox="0 0 32 32"><path d="M5 8h22M5 16h22M5 24h22"/></symbol>
+    <symbol id="ui-sun" viewBox="0 0 32 32"><circle cx="16" cy="16" r="6"/><path d="M16 2v4m0 20v4M2 16h4m20 0h4M6 6l3 3m14 14 3 3M26 6l-3 3M9 23l-3 3"/></symbol>
+    <symbol id="ui-moon" viewBox="0 0 32 32"><path d="M25 23A12 12 0 0 1 9 7 12 12 0 1 0 25 23Z"/></symbol>
+    <symbol id="ui-grid" viewBox="0 0 32 32"><rect x="4" y="4" width="10" height="10" rx="2"/><rect x="18" y="4" width="10" height="10" rx="2"/><rect x="4" y="18" width="10" height="10" rx="2"/><rect x="18" y="18" width="10" height="10" rx="2"/></symbol>
+    <symbol id="ui-plant" viewBox="0 0 32 32"><path d="M16 28V14M16 20c-7 0-11-5-10-12 7 0 11 4 10 12Zm0-4c0-7 4-11 11-12 1 7-3 12-11 12Z"/></symbol>
+    <symbol id="ui-search" viewBox="0 0 32 32"><circle cx="14" cy="14" r="8"/><path d="m20 20 8 8"/></symbol>
+    <symbol id="ui-outline" viewBox="0 0 32 32"><path d="M5 8 16 4l11 5-3 15-13 4-8-8Z"/><path d="m11 17 4 4 7-9"/></symbol>
+    <symbol id="ui-layers" viewBox="0 0 32 32"><path d="m16 4 13 7-13 7-13-7 13-7Zm-13 13 13 7 13-7M3 23l13 7 13-7"/></symbol>
+    <symbol id="ui-info" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><path d="M16 14v9M16 9h.01"/></symbol>
+    <symbol id="ui-map" viewBox="0 0 32 32"><path d="m3 7 8-3 10 4 8-3v20l-8 3-10-4-8 3V7Zm8-3v20M21 8v20"/></symbol>
+    <symbol id="ui-chart" viewBox="0 0 32 32"><path d="M4 28h24M7 24V15h5v9m4 0V8h5v16m4 0v-6h4v6"/></symbol>
+    <symbol id="ui-fit" viewBox="0 0 32 32"><path d="M4 12V4h8M20 4h8v8M4 20v8h8m8 0h8v-8"/></symbol>
+    <symbol id="ui-download" viewBox="0 0 32 32"><path d="M16 3v18m-7-7 7 7 7-7M5 24v5h22v-5"/></symbol>
+    <symbol id="ui-plus" viewBox="0 0 32 32"><path d="M16 5v22M5 16h22"/></symbol>
+    <symbol id="ui-minus" viewBox="0 0 32 32"><path d="M5 16h22"/></symbol>
+    <symbol id="ui-close" viewBox="0 0 32 32"><path d="M6 6 26 26M26 6 6 26"/></symbol>
+    <symbol id="ui-clock" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><path d="M16 8v9l6 4"/></symbol>
+    <symbol id="ui-back" viewBox="0 0 32 32"><path d="m18 6-10 10 10 10M8 16h20"/></symbol>
+    <symbol id="ui-arrow" viewBox="0 0 32 32"><path d="M5 16h22m-9-9 9 9-9 9"/></symbol>
+    <symbol id="icon-farm" viewBox="0 0 32 32"><path d="M3 15 16 4l13 11M7 13v15h18V13M13 28v-9h6v9"/></symbol>
+    <symbol id="icon-factory" viewBox="0 0 32 32"><path d="M3 28V12l8 5v-5l8 5V8h10v20H3ZM19 12h10M7 22h2m5 0h2m5 0h2m3 0h1"/></symbol>
+    <symbol id="icon-bottle" viewBox="0 0 32 32"><path d="M12 3h8m-7 0v7l-3 4c-2 2-2 4-2 7v6c0 2 2 3 4 3h8c2 0 4-1 4-3v-6c0-3 0-5-2-7l-3-4V3M9 18h14"/></symbol>
+    <symbol id="icon-rooster" viewBox="0 0 32 32"><path d="M10 26c-3-3-4-7-2-11 1-2 3-3 5-4l-1-5 4 2 2-5 3 4 4-1-1 6c3 2 4 5 3 8l-4 3-3-1-1 6H9m17-14 4 2-4 2"/><circle cx="19" cy="14" r="1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="icon-burial" viewBox="0 0 32 32"><path d="M7 7 25 25M25 7 7 25"/></symbol>
+    <symbol id="icon-empty" viewBox="0 0 32 32"><path d="M10 11a6 6 0 1 1 9 5c-2 1-3 2-3 5m0 5v1"/></symbol>
+  </svg>
+  <script src="parcel-data.js"></script>
+  <script src="demo-records.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
